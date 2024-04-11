@@ -14,17 +14,19 @@ import * as styles from './index.module.scss';
 
 type Props = {
   readonly className?: string;
+  readonly hasTenantSelector?: false;
+  readonly hasTitle?: false;
 };
 
-function Topbar({ className }: Props) {
+function Topbar({ className, hasTenantSelector, hasTitle }: Props) {
   const { t } = useTranslation(undefined, { keyPrefix: 'admin_console' });
   const LogtoLogo = isCloud ? CloudLogo : Logo;
 
   return (
     <div className={classNames(styles.topbar, className)}>
       <LogtoLogo className={styles.logo} />
-      {isCloud && <TenantSelector />}
-      {!isCloud && (
+      {isCloud && hasTenantSelector !== false && <TenantSelector />}
+      {!isCloud && hasTitle !== false && (
         <>
           <div className={styles.line} />
           <div className={styles.text}>{t('title')}</div>
