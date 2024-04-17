@@ -8,6 +8,13 @@ export const githubConfigGuard = z.object({
 
 export type GithubConfig = z.infer<typeof githubConfigGuard>;
 
+export const emailAddressGuard = z.object({
+  email: z.string(),
+  visibility: z.string().nullish(),
+  primary: z.boolean(),
+  verified: z.boolean(),
+});
+
 export const accessTokenResponseGuard = z.object({
   access_token: z.string(),
   scope: z.string(),

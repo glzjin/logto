@@ -22,6 +22,7 @@ import {
   accessTokenEndpoint,
   scope as defaultScope,
   userInfoEndpoint,
+  listEmailEndpoint,
   defaultMetadata,
   defaultTimeout,
 } from './constant.js';
@@ -29,6 +30,7 @@ import type { GithubConfig } from './types.js';
 import {
   authorizationCallbackErrorGuard,
   githubConfigGuard,
+  emailAddressGuard,
   accessTokenResponseGuard,
   userInfoResponseGuard,
   authResponseGuard,
@@ -117,21 +119,41 @@ const getUserInfo =
         },
         timeout: { request: defaultTimeout },
       });
+      const listEmailResponse = await got.get(listEmailEndpoint, {
+        headers: {
+          authorization: `token ${accessToken}`,
+        },
+        timeout: { request: defaultTimeout },
+      });
+
+      const privateEmails = parseJson(listEmailResponse.body);
       const rawData = parseJson(httpResponse.body);
+
       const result = userInfoResponseGuard.safeParse(rawData);
+      const emailsResult = emailAddressGuard.array().safeParse(privateEmails);
 
       if (!result.success) {
         throw new ConnectorError(ConnectorErrorCodes.InvalidResponse, result.error);
       }
 
-      const { id, avatar_url: avatar, email, name } = result.data;
+      if (!emailsResult.success) {
+        throw new ConnectorError(ConnectorErrorCodes.InvalidResponse, emailsResult.error);
+      }
+
+      const { id, avatar_url: avatar, email: publicEmail, name } = result.data;
 
       return {
         id: String(id),
         avatar: conditional(avatar),
-        email: conditional(email),
+        email: conditional(
+          publicEmail ??
+            emailsResult.data.find(({ verified, primary }) => verified && primary)?.email
+        ),
         name: conditional(name),
-        rawData,
+        rawData: {
+          userInfoRawData: rawData,
+          privateEmails: emailsResult.data,
+        },
       };
     } catch (error: unknown) {
       if (error instanceof HTTPError) {
