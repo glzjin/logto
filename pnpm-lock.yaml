@@ -3433,8 +3433,8 @@ importers:
         specifier: 6.0.0
         version: 6.0.0(typescript@5.3.3)
       '@simplewebauthn/browser':
-        specifier: ^9.0.0
-        version: 9.0.1
+        specifier: ^10.0.0
+        version: 10.0.0
       '@simplewebauthn/types':
         specifier: ^9.0.1
         version: 9.0.1
@@ -8363,10 +8363,10 @@ packages:
       typescript: 5.3.3
     dev: true
 
-  /@simplewebauthn/browser@9.0.1:
-    resolution: {integrity: sha512-wD2WpbkaEP4170s13/HUxPcAV5y4ZXaKo1TfNklS5zDefPinIgXOpgz1kpEvobAsaLPa2KeH7AKKX/od1mrBJw==}
+  /@simplewebauthn/browser@10.0.0:
+    resolution: {integrity: sha512-hG0JMZD+LiLUbpQcAjS4d+t4gbprE/dLYop/CkE01ugU/9sKXflxV5s0DRjdz3uNMFecatRfb4ZLG3XvF8m5zg==}
     dependencies:
-      '@simplewebauthn/types': 9.0.1
+      '@simplewebauthn/types': 10.0.0
     dev: true
 
   /@simplewebauthn/server@9.0.1:
@@ -8385,6 +8385,10 @@ packages:
     transitivePeerDependencies:
       - encoding
     dev: false
+
+  /@simplewebauthn/types@10.0.0:
+    resolution: {integrity: sha512-SFXke7xkgPRowY2E+8djKbdEznTVnD5R6GO7GPTthpHrokLvNKw8C3lFZypTxLI7KkCfGPfhtqB3d7OVGGa9jQ==}
+    dev: true
 
   /@simplewebauthn/types@9.0.1:
     resolution: {integrity: sha512-tGSRP1QvsAvsJmnOlRQyw/mvK9gnPtjEc5fg2+m8n+QUa+D7rvrKkOYyfpy42GTs90X3RDOnqJgfHt+qO67/+w==}
