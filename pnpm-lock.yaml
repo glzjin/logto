@@ -3466,8 +3466,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.1
       '@simplewebauthn/types':
-        specifier: ^9.0.1
-        version: 9.0.1
+        specifier: ^10.0.0
+        version: 10.0.0
       '@swc/core':
         specifier: ^1.3.52
         version: 1.3.52
@@ -9158,6 +9158,10 @@ packages:
     transitivePeerDependencies:
       - encoding
     dev: false
+
+  /@simplewebauthn/types@10.0.0:
+    resolution: {integrity: sha512-SFXke7xkgPRowY2E+8djKbdEznTVnD5R6GO7GPTthpHrokLvNKw8C3lFZypTxLI7KkCfGPfhtqB3d7OVGGa9jQ==}
+    dev: true
 
   /@simplewebauthn/types@9.0.1:
     resolution: {integrity: sha512-tGSRP1QvsAvsJmnOlRQyw/mvK9gnPtjEc5fg2+m8n+QUa+D7rvrKkOYyfpy42GTs90X3RDOnqJgfHt+qO67/+w==}
