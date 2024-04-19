@@ -1,18 +1,12 @@
 import { condArray } from '@silverhand/essentials';
 import { useMemo } from 'react';
-import { Navigate, type RouteObject } from 'react-router-dom';
+import { type RouteObject } from 'react-router-dom';
 
 import { isCloud, isDevFeaturesEnabled } from '@/consts/env';
 import Dashboard from '@/pages/Dashboard';
 import GetStarted from '@/pages/GetStarted';
 import Mfa from '@/pages/Mfa';
 import NotFound from '@/pages/NotFound';
-import OrganizationGuide from '@/pages/Organizations/Guide';
-import Introduction from '@/pages/Organizations/Guide/Introduction';
-import OrganizationInfo from '@/pages/Organizations/Guide/OrganizationInfo';
-import OrganizationPermissions from '@/pages/Organizations/Guide/OrganizationPermissions';
-import OrganizationRoles from '@/pages/Organizations/Guide/OrganizationRoles';
-import { steps } from '@/pages/Organizations/Guide/const';
 import SigningKeys from '@/pages/SigningKeys';
 
 import { apiResources } from './routes/api-resources';
@@ -49,19 +43,8 @@ export const useConsoleRoutes = () => {
         users,
         auditLogs,
         roles,
-        isDevFeaturesEnabled && organizationTemplate,
+        organizationTemplate,
         organizations,
-        !isDevFeaturesEnabled && {
-          path: 'organization-guide/*',
-          element: <OrganizationGuide />,
-          children: [
-            { index: true, element: <Navigate replace to={steps.introduction} /> },
-            { path: steps.introduction, element: <Introduction /> },
-            { path: steps.permissions, element: <OrganizationPermissions /> },
-            { path: steps.roles, element: <OrganizationRoles /> },
-            { path: steps.organizationInfo, element: <OrganizationInfo /> },
-          ],
-        },
         profile,
         { path: 'signing-keys', element: <SigningKeys /> },
         isCloud && tenantSettings,

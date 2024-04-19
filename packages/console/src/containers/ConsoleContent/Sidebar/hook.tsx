@@ -103,7 +103,6 @@ export const useSidebarMenuItems = (): {
         {
           Icon: OrganizationTemplate,
           title: 'organization_template',
-          isHidden: !isDevFeaturesEnabled,
         },
       ],
     },
