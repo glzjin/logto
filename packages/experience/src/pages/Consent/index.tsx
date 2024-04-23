@@ -8,6 +8,7 @@ import Button from '@/components/Button';
 import TextLink from '@/components/TextLink';
 import useApi from '@/hooks/use-api';
 import useErrorHandler from '@/hooks/use-error-handler';
+import useGlobalRedirectTo from '@/hooks/use-global-redirect-to';
 
 import OrganizationSelector, { type Organization } from './OrganizationSelector';
 import ScopesListCard from './ScopesListCard';
@@ -19,6 +20,7 @@ const Consent = () => {
   const handleError = useErrorHandler();
   const asyncConsent = useApi(consent);
   const { t } = useTranslation();
+  const redirectTo = useGlobalRedirectTo();
 
   const [consentData, setConsentData] = useState<ConsentInfoResponse>();
   const [selectedOrganization, setSelectedOrganization] = useState<Organization>();
@@ -35,9 +37,9 @@ const Consent = () => {
     }
 
     if (result?.redirectTo) {
-      window.location.replace(result.redirectTo);
+      redirectTo(result.redirectTo);
     }
-  }, [asyncConsent, handleError, selectedOrganization?.id]);
+  }, [asyncConsent, handleError, redirectTo, selectedOrganization?.id]);
 
   useEffect(() => {
     const getConsentInfoHandler = async () => {
