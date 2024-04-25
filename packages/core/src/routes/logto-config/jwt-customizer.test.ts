@@ -149,10 +149,9 @@ describe('configs JWT customizer routes', () => {
     expect(response.status).toEqual(204);
   });
 
-  it('POST /configs/jwt-customizer/test should return 200', async () => {
-    const cloudConnectionResponse = { success: true };
+  it('POST /configs/jwt-customizer/test should not call cloud connection client post', async () => {
     jest.spyOn(tenantContext.cloudConnection, 'getClient').mockResolvedValue(mockCloudClient);
-    jest.spyOn(mockCloudClient, 'post').mockResolvedValue(cloudConnectionResponse);
+    const clientPostSpy = jest.spyOn(mockCloudClient, 'post');
 
     const payload: JwtCustomizerTestRequestBody = {
       tokenType: LogtoJwtTokenKeyType.ClientCredentials,
@@ -161,7 +160,7 @@ describe('configs JWT customizer routes', () => {
       token: {},
     };
 
-    const response = await routeRequester.post('/configs/jwt-customizer/test').send(payload);
+    await routeRequester.post('/configs/jwt-customizer/test').send(payload);
 
     expect(tenantContext.libraries.jwtCustomizers.deployJwtCustomizerScript).toHaveBeenCalledWith({
       key: LogtoJwtTokenKey.ClientCredentials,
@@ -169,13 +168,8 @@ describe('configs JWT customizer routes', () => {
       useCase: 'test',
     });
 
-    expect(mockCloudClient.post).toHaveBeenCalledWith('/api/services/custom-jwt', {
-      body: payload,
-      search: {
-        isTest: 'true',
-      },
-    });
+    expect(clientPostSpy).toHaveBeenCalledTimes(0);
 
-    expect(response.status).toEqual(200);
+    // TODO: Add the test on nested class static method.
   });
 });
