@@ -5,7 +5,7 @@ import { createMockUtils } from '@logto/shared/esm';
 import RequestError from '#src/errors/RequestError/index.js';
 import { mockId, mockIdGenerators } from '#src/test-utils/nanoid.js';
 
-import { ManagementHookContextManager } from './types.js';
+import { DataHookContextManager } from './hook-context-manager.js';
 import { generateHookTestPayload, parseResponse } from './utils.js';
 
 const { jest } = import.meta;
@@ -61,7 +61,7 @@ const findAllHooks = jest.fn().mockResolvedValue([hook, managementHook]);
 const findHookById = jest.fn().mockResolvedValue(hook);
 
 const { createHookLibrary } = await import('./index.js');
-const { triggerInteractionHooks, testHook, triggerManagementHooks } = createHookLibrary(
+const { triggerInteractionHooks, triggerTestHook, triggerDataHooks } = createHookLibrary(
   new MockQueries({
     users: {
       findUserById: jest.fn().mockReturnValue({
@@ -128,7 +128,7 @@ describe('triggerInteractionHooks()', () => {
   });
 });
 
-describe('testHook', () => {
+describe('triggerTestHook', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -136,11 +136,14 @@ describe('testHook', () => {
   it('should call sendWebhookRequest with correct values', async () => {
     jest.useFakeTimers().setSystemTime(100_000);
 
-    await testHook(hook.id, [InteractionHookEvent.PostSignIn], hook.config);
-    const testHookPayload = generateHookTestPayload(hook.id, InteractionHookEvent.PostSignIn);
+    await triggerTestHook(hook.id, [InteractionHookEvent.PostSignIn], hook.config);
+    const triggerTestHookPayload = generateHookTestPayload(
+      hook.id,
+      InteractionHookEvent.PostSignIn
+    );
     expect(sendWebhookRequest).toHaveBeenCalledWith({
       hookConfig: hook.config,
-      payload: testHookPayload,
+      payload: triggerTestHookPayload,
       signingKey: hook.signingKey,
     });
 
@@ -148,7 +151,7 @@ describe('testHook', () => {
   });
 
   it('should call sendWebhookRequest with correct times if multiple events are provided', async () => {
-    await testHook(
+    await triggerTestHook(
       hook.id,
       [InteractionHookEvent.PostSignIn, InteractionHookEvent.PostResetPassword],
       hook.config
@@ -159,7 +162,7 @@ describe('testHook', () => {
   it('should throw send test payload failed error if sendWebhookRequest fails', async () => {
     sendWebhookRequest.mockRejectedValueOnce(new Error('test error'));
     await expect(
-      testHook(hook.id, [InteractionHookEvent.PostSignIn], hook.config)
+      triggerTestHook(hook.id, [InteractionHookEvent.PostSignIn], hook.config)
     ).rejects.toThrowError(
       new RequestError({
         code: 'hook.send_test_payload_failed',
@@ -170,7 +173,7 @@ describe('testHook', () => {
   });
 });
 
-describe('triggerManagementHooks()', () => {
+describe('triggerDataHooks()', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -181,13 +184,13 @@ describe('triggerManagementHooks()', () => {
     const metadata = { userAgent: 'ua', ip: 'ip' };
     const hookData = { path: '/test', method: 'POST', body: { success: true } };
 
-    const hooksManager = new ManagementHookContextManager(metadata);
+    const hooksManager = new DataHookContextManager(metadata);
     hooksManager.appendContext({
       event: 'Role.Created',
       data: hookData,
     });
 
-    await triggerManagementHooks(hooksManager);
+    await triggerDataHooks(hooksManager);
 
     expect(findAllHooks).toHaveBeenCalled();
 

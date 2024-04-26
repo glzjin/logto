@@ -1,4 +1,4 @@
-import type { AuditLogKey, WebhookLogKey, JwtCustomizerLogKey, LogKey } from '@logto/schemas';
+import type { AuditLogKey, JwtCustomizerLogKey, LogKey, WebhookLogKey } from '@logto/schemas';
 import { type Optional } from '@silverhand/essentials';
 
 export const auditLogEventTitle: Record<string, Optional<string>> &
@@ -84,6 +84,9 @@ const webhookLogEventTitle: Record<string, Optional<string>> &
   'TriggerHook.PostRegister': undefined,
   'TriggerHook.PostResetPassword': undefined,
   'TriggerHook.PostSignIn': undefined,
+  'TriggerHook.Role.Created': undefined,
+  'TriggerHook.Role.Deleted': undefined,
+  'TriggerHook.Role.Updated': undefined,
 });
 
 const jwtCustomizerLogEventTitle: Record<string, Optional<string>> &
