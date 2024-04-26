@@ -41,7 +41,6 @@ export default function logtoConfigJwtCustomizerRoutes<T extends AuthedRouter>(
   const { getRowsByKeys, deleteJwtCustomizer } = queries.logtoConfigs;
   const { upsertJwtCustomizer, getJwtCustomizer, getJwtCustomizers, updateJwtCustomizer } =
     logtoConfigs;
-  const { deployJwtCustomizerScript, undeployJwtCustomizerScript } = libraries.jwtCustomizers;
 
   router.put(
     '/configs/jwt-customizer/:tokenTypePath',
@@ -79,7 +78,7 @@ export default function logtoConfigJwtCustomizerRoutes<T extends AuthedRouter>(
 
       // Deploy first to avoid the case where the JWT customizer was saved to DB but not deployed successfully.
       if (!isIntegrationTest) {
-        await deployJwtCustomizerScript({
+        await libraries.jwtCustomizers.deployJwtCustomizerScript({
           key,
           value: body,
           useCase: 'production',
@@ -123,7 +122,7 @@ export default function logtoConfigJwtCustomizerRoutes<T extends AuthedRouter>(
 
       // Deploy first to avoid the case where the JWT customizer was saved to DB but not deployed successfully.
       if (!isIntegrationTest) {
-        await deployJwtCustomizerScript({
+        await libraries.jwtCustomizers.deployJwtCustomizerScript({
           key,
           value: body,
           useCase: 'production',
@@ -195,7 +194,7 @@ export default function logtoConfigJwtCustomizerRoutes<T extends AuthedRouter>(
 
       // Undeploy the script first to avoid the case where the JWT customizer was deleted from DB but worker script not updated successfully.
       if (!isIntegrationTest) {
-        await undeployJwtCustomizerScript(tokenKey);
+        await libraries.jwtCustomizers.undeployJwtCustomizerScript(tokenKey);
       }
 
       await deleteJwtCustomizer(tokenKey);
@@ -216,7 +215,7 @@ export default function logtoConfigJwtCustomizerRoutes<T extends AuthedRouter>(
       const { body } = ctx.guard;
 
       // Deploy the test script
-      await deployJwtCustomizerScript({
+      await libraries.jwtCustomizers.deployJwtCustomizerScript({
         key:
           body.tokenType === LogtoJwtTokenKeyType.AccessToken
             ? LogtoJwtTokenKey.AccessToken
