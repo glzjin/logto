@@ -1,5 +1,11 @@
 # @logto/app-insights
 
+## 2.0.0
+
+### Major Changes
+
+- c1c746bca: remove application insights for react
+
 ## 1.4.0
 
 ### Minor Changes

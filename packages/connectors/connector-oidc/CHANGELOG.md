@@ -1,5 +1,16 @@
 # @logto/connector-oidc
 
+## 1.3.0
+
+### Minor Changes
+
+- f9c7a72d5: Support `client_secret_basic` and `client_secret_jwt` token endpoint auth method for oauth & oidc connectors
+
+### Patch Changes
+
+- Updated dependencies [f9c7a72d5]
+  - @logto/connector-oauth@1.3.0
+
 ## 1.2.0
 
 ### Minor Changes

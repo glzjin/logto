@@ -1,5 +1,21 @@
 # Change Log
 
+## 1.16.0
+
+### Minor Changes
+
+- e8c41b164: support organization custom data
+
+  Now you can save additional data associated with the organization with the organization-level `customData` field by:
+
+  - Edit in the Console organization details page.
+  - Specify `customData` field when using organization Management APIs.
+
+### Patch Changes
+
+- Updated dependencies [5b03030de]
+  - @logto/phrases@1.10.1
+
 ## 1.15.0
 
 ### Minor Changes

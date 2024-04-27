@@ -1,5 +1,55 @@
 # Change Log
 
+## 1.16.0
+
+### Minor Changes
+
+- 8ef021fb3: add support for Redis Cluster and extra TLS options for Redis connections
+- e8c41b164: support organization custom data
+
+  Now you can save additional data associated with the organization with the organization-level `customData` field by:
+
+  - Edit in the Console organization details page.
+  - Specify `customData` field when using organization Management APIs.
+
+### Patch Changes
+
+- 52df3ebbb: Bug fix: organization invitation APIs should handle invitee emails case insensitively
+- 368385b93: Management API will not return 500 in production for status codes that are not listed in the OpenAPI spec
+- d54530356: Fix OIDC AccessDenied error code to 403.
+
+  This error may happen when you try to grant an access token to a user lacking the required permissions, especially when granting for orgnization related resources. The error code should be 403 instead of 400.
+
+- 5b03030de: Not allow to modify management API resource through API.
+
+  Previously, management API resource and its scopes are readonly in Console. But it was possible to modify through the API. This is not allowed anymore.
+
+- b575f57ac: Support comma separated resource parameter
+
+  Some third-party libraries or plugins do not support array of resources, and can only specify `resource` through `additionalParameters` config, e.g. `flutter-appauth`. However, only one resource can be specified at a time in this way. This PR enables comma separated resource parameter support in Logto core service, so that multiple resources can be specified via a single string.
+
+  For example: Auth URL like `/oidc/auth?resource=https://example.com/api1,https://example.com/api2` will be interpreted and parsed to Logto core service as `/ordc/auth?resource=https://example.com/api1&resource=https://example.com/api2`.
+
+- aacbebcbc: Provide management API to fetch user organization scopes based on user organization roles
+
+  - GET `organizations/:id/users/:userId/scopes`
+
+- ead2abde6: fix a bug that API resource indicator does not work if the indicator is not followed by a trailing slash or a pathname
+
+  - Bump `oidc-provider@8.4.6` to fix the above issue
+
+- Updated dependencies [5b03030de]
+- Updated dependencies [b80934ac5]
+- Updated dependencies [e8c41b164]
+- Updated dependencies [9cf03c8ed]
+- Updated dependencies [c1c746bca]
+  - @logto/phrases@1.10.1
+  - @logto/experience@1.6.1
+  - @logto/schemas@1.16.0
+  - @logto/console@1.13.1
+  - @logto/app-insights@2.0.0
+  - @logto/cli@1.16.0
+
 ## 1.15.0
 
 ### Minor Changes

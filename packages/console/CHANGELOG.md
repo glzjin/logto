@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.13.1
+
+### Patch Changes
+
+- 9cf03c8ed: Add Java Spring Boot web integration guide to the application creation page
+
 ## 1.13.0
 
 ### Minor Changes
