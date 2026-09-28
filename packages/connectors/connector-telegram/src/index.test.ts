@@ -47,7 +47,7 @@ afterAll(() => {
   nock.cleanAll();
 });
 
-it('uses S256 PKCE and maps only verified phone claims from signed tokens', async () => {
+it('accepts the Logto callback without state and maps only verified phone claims with S256 PKCE', async () => {
   const { uri, session } = await begin();
   expect(uri.searchParams.get('scope')).toBe('openid profile phone');
   expect(uri.searchParams.get('code_challenge')).toBe(
@@ -63,7 +63,10 @@ it('uses S256 PKCE and maps only verified phone claims from signed tokens', asyn
     )
     .reply(200, { id_token: await token({ nonce: session.nonce }) });
   expect(
-    await connector.getUserInfo({ code: 'code', state: 'state' }, async () => session)
+    await connector.getUserInfo(
+      { code: 'code', redirectUri: session.redirectUri },
+      async () => session
+    )
   ).toMatchObject({ id: 'telegram-user', phone: '14155552671' });
   expect(request.isDone()).toBe(true);
   nock(issuer)

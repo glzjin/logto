@@ -83,10 +83,13 @@ const createTelegramConnector: CreateConnector<SocialConnector> = async ({ getCo
     return `${issuer}/auth?${query.toString()}`;
   },
   async getUserInfo(data, getSession) {
-    const callback = z.object({ code: z.string().min(1), state: z.string().min(1) }).parse(data);
+    // Logto validates and consumes state before passing the callback to connectors.
+    const callback = z
+      .object({ code: z.string().min(1), state: z.string().min(1).optional() })
+      .parse(data);
     const session = sessionGuard.parse(await getSession());
     assert(
-      callback.state === session.state,
+      callback.state === undefined || callback.state === session.state,
       new ConnectorError(ConnectorErrorCodes.SocialAuthCodeInvalid)
     );
     const { clientId, clientSecret } = configGuard.parse(await getConfig(metadata.id));
