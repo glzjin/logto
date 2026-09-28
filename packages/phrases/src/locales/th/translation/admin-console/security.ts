@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'CAPTCHA แบบเลื่อนที่โฮสต์เอง',
+    endpoint: 'URL บริการ',
+    id: 'รหัสตัวเลื่อน',
+  },
+
   page_title: 'การรักษาความปลอดภัย',
   title: 'การรักษาความปลอดภัย',
   subtitle: 'กำหนดค่าการป้องกันขั้นสูงต่อการโจมตีที่ซับซ้อน',

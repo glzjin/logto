@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'اسحب قطعة اللغز إلى الفراغ',
+  captcha_refresh: 'لغز جديد',
   sign_in: 'تسجيل الدخول',
   continue: 'متابعة',
   continue_as: 'المتابعة كـ {{name}}',

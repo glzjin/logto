@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'CAPTCHA deslizante autoalojado',
+    endpoint: 'URL do serviço',
+    id: 'ID do controlo',
+  },
+
   page_title: 'Segurança',
   title: 'Segurança',
   subtitle: 'Configure proteções avançadas para se defender contra ataques complexos.',

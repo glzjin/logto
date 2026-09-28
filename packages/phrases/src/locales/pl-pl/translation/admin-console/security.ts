@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'Samodzielnie hostowana CAPTCHA z suwakiem',
+    endpoint: 'Adres URL usługi',
+    id: 'Identyfikator suwaka',
+  },
+
   page_title: 'Bezpieczeństwo',
   title: 'Bezpieczeństwo',
   subtitle: 'Skonfiguruj zaawansowane zabezpieczenia, aby chronić się przed złożonymi atakami.',

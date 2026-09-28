@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'Desliza la pieza hasta su lugar',
+  captcha_refresh: 'Cambiar imagen',
   sign_in: 'Iniciar sesión',
   continue: 'Continuar',
   continue_as: 'Continuar como {{name}}',

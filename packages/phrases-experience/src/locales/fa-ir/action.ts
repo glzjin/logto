@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'قطعه پازل را به جای خالی بکشید',
+  captcha_refresh: 'پازل جدید',
   sign_in: 'ورود',
   continue: 'ادامه',
   continue_as: 'ادامه به عنوان {{name}}',

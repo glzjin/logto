@@ -15,7 +15,8 @@ const CaptchaBox = () => {
   const needsWidget =
     isCaptchaRequired &&
     captchaConfig &&
-    (captchaConfig.type === CaptchaType.Turnstile ||
+    (captchaConfig.type === CaptchaType.GoCaptcha ||
+      captchaConfig.type === CaptchaType.Turnstile ||
       captchaConfig.type === CaptchaType.Cap ||
       captchaConfig.mode === RecaptchaEnterpriseMode.Checkbox);
 

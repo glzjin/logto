@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'セルフホスト型スライダー CAPTCHA',
+    endpoint: 'サービス URL',
+    id: 'スライダー ID',
+  },
+
   page_title: 'セキュリティ',
   title: 'セキュリティ',
   subtitle: '高度な攻撃に対する高度な保護を構成します。',

@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'Пересуньте фрагмент на місце',
+  captcha_refresh: 'Оновити зображення',
   sign_in: 'Увійти',
   continue: 'Продовжити',
   continue_as: 'Продовжити як {{name}}',

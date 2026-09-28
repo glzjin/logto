@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'Самостоятельно размещённая CAPTCHA с ползунком',
+    endpoint: 'URL сервиса',
+    id: 'ID ползунка',
+  },
+
   page_title: 'Безопасность',
   title: 'Безопасность',
   subtitle: 'Настройте расширенную защиту от сложных атак.',

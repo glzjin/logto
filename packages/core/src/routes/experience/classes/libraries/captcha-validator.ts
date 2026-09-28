@@ -14,6 +14,8 @@ import { ssrfProtectedFetch } from '#src/utils/outbound-request.js';
 
 const DEFAULT_SCORE_THRESHOLD = 0.5;
 
+import { verifyGoCaptcha } from './go-captcha.js';
+
 function isRecaptchaEnterprise(
   config: CaptchaProvider['config']
 ): config is RecaptchaEnterpriseConfig {
@@ -48,11 +50,34 @@ export const isScorePass = ({ valid, score, mode, scoreThreshold }: ScorePassPar
 export class CaptchaValidator {
   constructor(
     private readonly captchaProvider: CaptchaProvider,
-    private readonly log: LogEntry
+    private readonly log: LogEntry,
+    private readonly binding?: { tenantId: string; sessionId: string }
   ) {}
 
   public async verifyCaptcha(captchaToken: string): Promise<boolean> {
     const { config } = this.captchaProvider;
+
+    if (config.type === CaptchaType.GoCaptcha) {
+      try {
+        const success = Boolean(
+          this.binding &&
+            (await verifyGoCaptcha(
+              config,
+              this.binding.tenantId,
+              this.binding.sessionId,
+              captchaToken
+            ))
+        );
+        this.log.append({ success });
+        return success;
+      } catch {
+        this.log.append({
+          success: false,
+          errorMessage: 'GoCaptcha verification unavailable or invalid',
+        });
+        return false;
+      }
+    }
 
     if (isRecaptchaEnterprise(config)) {
       return this.verifyRecaptchaEnterprise(config, captchaToken);

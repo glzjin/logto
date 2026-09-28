@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'ピースを隙間にスライドしてください',
+  captcha_refresh: '新しいパズル',
   sign_in: 'サインイン',
   continue: '続ける',
   continue_as: '{{name}} として続ける',

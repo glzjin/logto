@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'CAPTCHA a scorrimento autogestito',
+    endpoint: 'URL del servizio',
+    id: 'ID del cursore',
+  },
+
   page_title: 'Sicurezza',
   title: 'Sicurezza',
   subtitle: 'Configura una protezione avanzata contro attacchi sofisticati.',

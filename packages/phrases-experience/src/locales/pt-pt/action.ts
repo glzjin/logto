@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'Deslize a peça até à lacuna',
+  captcha_refresh: 'Novo puzzle',
   sign_in: 'Entrar',
   continue: 'Continuar',
   continue_as: 'Continuar como {{name}}',

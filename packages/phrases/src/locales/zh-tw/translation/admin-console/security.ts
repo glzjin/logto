@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: '自架滑動驗證碼',
+    endpoint: '服務網址',
+    id: '滑塊設定 ID',
+  },
+
   page_title: '安全',
   title: '安全',
   subtitle: '配置進階保護以抵禦複雜攻擊。',

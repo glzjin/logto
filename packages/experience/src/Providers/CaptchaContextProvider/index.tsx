@@ -1,5 +1,6 @@
 import { CaptchaType, RecaptchaEnterpriseMode, Theme } from '@logto/schemas';
-import { useMemo, useContext, useCallback, useEffect, useRef } from 'react';
+import { useMemo, useContext, useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
 import useToast from '@/hooks/use-toast';
@@ -8,6 +9,7 @@ import PageContext from '../PageContextProvider/PageContext';
 
 import CaptchaContext, { type CaptchaContextType } from './CaptchaContext';
 import { loadCapWidget, solveCapWidget } from './cap';
+import GoCaptcha from './GoCaptcha';
 import { scriptId } from './constant';
 import { getScript } from './utils';
 
@@ -20,6 +22,9 @@ const CaptchaContextProvider = ({ children }: Props) => {
   const widgetRef = useRef<HTMLDivElement>(null);
   const { setToast } = useToast();
   const { t } = useTranslation();
+  const [pending, setPending] = useState<{
+    resolve: (token: string | false) => void;
+  }>();
 
   const captchaPolicy = experienceSettings?.captchaPolicy;
   const captchaConfig = experienceSettings?.captchaConfig;
@@ -27,7 +32,7 @@ const CaptchaContextProvider = ({ children }: Props) => {
   const isCaptchaRequired = Boolean(captchaPolicy?.enabled);
 
   const initCaptcha = useCallback(() => {
-    if (!isCaptchaRequired || !captchaConfig) {
+    if (!isCaptchaRequired || !captchaConfig || captchaConfig.type === CaptchaType.GoCaptcha) {
       return;
     }
 
@@ -66,6 +71,15 @@ const CaptchaContextProvider = ({ children }: Props) => {
         setToast(t('error.captcha_verification_failed'));
         throw error;
       }
+    }
+
+    if (captchaConfig.type === CaptchaType.GoCaptcha) {
+      if (!widgetRef.current) {
+        return;
+      }
+      return new Promise<string | false>((resolve) => {
+        setPending({ resolve });
+      });
     }
 
     if (captchaConfig.type === CaptchaType.Turnstile) {
@@ -144,7 +158,26 @@ const CaptchaContextProvider = ({ children }: Props) => {
     [isCaptchaRequired, executeCaptcha, captchaConfig, widgetRef]
   );
 
-  return <CaptchaContext.Provider value={captchaContext}>{children}</CaptchaContext.Provider>;
+  return (
+    <CaptchaContext.Provider value={captchaContext}>
+      {children}
+      {pending &&
+        widgetRef.current &&
+        createPortal(
+          <GoCaptcha
+            onComplete={(token) => {
+              pending.resolve(token);
+              setPending(undefined);
+            }}
+            onCancel={() => {
+              pending.resolve(false);
+              setPending(undefined);
+            }}
+          />,
+          widgetRef.current
+        )}
+    </CaptchaContext.Provider>
+  );
 };
 
 export default CaptchaContextProvider;

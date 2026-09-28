@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'Przesuń element układanki do luki',
+  captcha_refresh: 'Nowa układanka',
   sign_in: 'Zaloguj się',
   continue: 'Kontynuuj',
   continue_as: 'Kontynuuj jako {{name}}',
