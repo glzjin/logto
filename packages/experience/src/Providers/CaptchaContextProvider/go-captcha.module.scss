@@ -1,0 +1,49 @@
+.captcha {
+  padding: 12px;
+  border: 1px solid currentcolor;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+
+  p {
+    margin: 0 0 12px;
+  }
+
+  input {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  button {
+    min-height: 44px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: default;
+  }
+}
+
+.puzzle {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.background {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tile {
+  position: absolute;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}

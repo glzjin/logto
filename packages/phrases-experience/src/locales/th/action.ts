@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'เลื่อนชิ้นส่วนให้ตรงกับช่องว่าง',
+  captcha_refresh: 'ภาพใหม่',
   sign_in: 'เข้าสู่ระบบ',
   continue: 'ดำเนินการต่อ',
   continue_as: 'ดำเนินการต่อในชื่อ {{name}}',

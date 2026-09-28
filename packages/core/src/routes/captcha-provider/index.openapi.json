@@ -30,7 +30,7 @@
               "schema": {
                 "properties": {
                   "config": {
-                    "description": "The captcha provider config."
+                    "description": "The captcha provider config. GoCaptcha requires type GoCaptcha, domain (service URL), siteKey (slider ID), and secretKey (management API key). Redis 6.2+ is required."
                   }
                 }
               }

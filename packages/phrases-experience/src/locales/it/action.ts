@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'Fai scorrere il pezzo nello spazio vuoto',
+  captcha_refresh: 'Nuovo puzzle',
   sign_in: 'Accedi',
   continue: 'Continua',
   continue_as: 'Continua come {{name}}',

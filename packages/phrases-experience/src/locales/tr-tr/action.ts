@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'Yapboz parçasını boşluğa kaydırın',
+  captcha_refresh: 'Yeni yapboz',
   sign_in: 'Giriş Yap',
   continue: 'İlerle',
   continue_as: '{{name}} olarak devam et',

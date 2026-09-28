@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'اختبار CAPTCHA منزلق مستضاف ذاتيًا',
+    endpoint: 'رابط الخدمة',
+    id: 'معرّف المنزلق',
+  },
+
   page_title: 'الأمان',
   title: 'الأمان',
   subtitle: 'قم بتكوين حماية متقدمة ضد الهجمات المتطورة.',

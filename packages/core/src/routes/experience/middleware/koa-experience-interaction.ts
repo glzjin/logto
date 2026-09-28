@@ -17,6 +17,8 @@ export type WithExperienceInteractionContext<
  * White-listed endpoints that does not require an validation and initialization of `ExperienceInteraction`.
  */
 const whiteListedEndpoint = [
+  // Create a session-bound challenge before initializing the experience interaction.
+  { method: 'POST', path: `${experienceRoutes.prefix}/captcha` },
   // PUT /experience:  New ExperienceInteraction instance supposed to be created for this request.
   {
     method: 'PUT',

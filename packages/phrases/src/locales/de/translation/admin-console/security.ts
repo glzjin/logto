@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'Selbst gehostetes Schiebe-CAPTCHA',
+    endpoint: 'Dienst-URL',
+    id: 'Schieberegler-ID',
+  },
+
   page_title: 'Sicherheit',
   title: 'Sicherheit',
   subtitle: 'Erweiterte Schutzmaßnahmen gegen komplexe Angriffe konfigurieren.',

@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: '拖動滑塊，將拼圖移入缺口',
+  captcha_refresh: '換一張',
   sign_in: '登錄',
   continue: '繼續',
   continue_as: '以 {{name}} 繼續',

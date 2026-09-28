@@ -1,5 +1,6 @@
 import { CaptchaType } from '@logto/schemas';
 
+import goCaptcha from '@/assets/icons/shield.svg?react';
 import recaptchaEnterprise from '@/assets/images/recaptcha.svg?react';
 import turnstile from '@/assets/images/turnstile.svg?react';
 
@@ -74,6 +75,34 @@ ${enableCaptchaReadme}
 `;
 
 export const captchaProviders: CaptchaProviderMetadata[] = [
+  {
+    name: 'security.go_captcha.name',
+    type: CaptchaType.GoCaptcha,
+    logo: goCaptcha,
+    logoDark: goCaptcha,
+    description: 'security.go_captcha.description',
+    readme: `# GoCaptcha Service
+
+Deploy [GoCaptcha Service](https://github.com/wenlng/go-captcha-service) and enable Redis 6.2+ in Logto.
+Enter the service URL reachable by Logto, slider ID (for example slide-default), and management API key.
+The browser uses Logto's same-origin API. No external scripts or service credentials are exposed.
+Challenges expire after five minutes and can only be attempted once in the originating login session.
+
+${enableCaptchaReadme}`,
+    requiredFields: [
+      {
+        field: 'domain',
+        label: 'security.go_captcha.endpoint',
+        placeholder: 'security.go_captcha.endpoint',
+      },
+      { field: 'siteKey', label: 'security.go_captcha.id', placeholder: 'security.go_captcha.id' },
+      {
+        field: 'secretKey',
+        label: 'security.captcha_details.secret_key',
+        placeholder: 'security.captcha_details.secret_key',
+      },
+    ],
+  },
   {
     name: 'security.captcha_providers.recaptcha_enterprise.name',
     type: CaptchaType.RecaptchaEnterprise,

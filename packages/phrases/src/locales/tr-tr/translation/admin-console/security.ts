@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'Kendi sunucunuzda kaydırmalı CAPTCHA',
+    endpoint: 'Hizmet URL adresi',
+    id: 'Kaydırıcı kimliği',
+  },
+
   page_title: 'Güvenlik',
   title: 'Güvenlik',
   subtitle: 'Karmaşık saldırıları önlemek için gelişmiş korumaları yapılandırın.',

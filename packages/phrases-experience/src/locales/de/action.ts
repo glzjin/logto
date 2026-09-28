@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'Schieben Sie das Puzzleteil in die Lücke',
+  captcha_refresh: 'Neues Puzzle',
   sign_in: 'Anmelden',
   continue: 'Weiter',
   continue_as: 'Weiter als {{name}}',

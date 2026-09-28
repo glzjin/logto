@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: '퍼즐 조각을 빈칸으로 이동하세요',
+  captcha_refresh: '새 퍼즐',
   sign_in: '로그인',
   continue: '계속',
   continue_as: '{{name}}(으)로 계속',

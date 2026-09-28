@@ -81,6 +81,9 @@ const usePasswordSignIn = () => {
     async (payload: PasswordVerificationPayload) => {
       const { identifier } = payload;
       const captchaToken = await executeCaptcha();
+      if (captchaToken === false) {
+        return;
+      }
 
       // Check if the email is registered with any SSO connectors. If the email is registered with any SSO connectors, we should not proceed to the next step
       if (identifier.type === SignInIdentifier.Email) {

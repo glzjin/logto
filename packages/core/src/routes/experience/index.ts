@@ -10,7 +10,12 @@
  * The experience APIs can be used by developers to build custom user interaction experiences.
  */
 
-import { identificationApiPayloadGuard, InteractionEvent } from '@logto/schemas';
+import {
+  CaptchaType,
+  goCaptchaChallengeGuard,
+  identificationApiPayloadGuard,
+  InteractionEvent,
+} from '@logto/schemas';
 import type Router from 'koa-router';
 import { z } from 'zod';
 
@@ -23,6 +28,7 @@ import { type AnonymousRouter, type RouterInitArgs } from '../types.js';
 
 import experienceAnonymousRoutes from './anonymous-routes/index.js';
 import ExperienceInteraction from './classes/experience-interaction.js';
+import { createGoCaptcha } from './classes/libraries/go-captcha.js';
 import { experienceRoutes } from './const.js';
 import koaExperienceAuditLog from './middleware/koa-experience-audit-log.js';
 import { koaExperienceInteractionHooks } from './middleware/koa-experience-interaction-hooks.js';
@@ -58,6 +64,30 @@ export default function experienceApiRoutes<T extends AnonymousRouter>(
       koaExperienceInteraction(tenant),
       koaExperienceAuditLog()
     );
+
+  experienceRouter.post(
+    `${experienceRoutes.prefix}/captcha`,
+    koaGuard({ response: goCaptchaChallengeGuard, status: [200, 422] }),
+    async (ctx, next) => {
+      const captchaProvider = await tenant.queries.captchaProviders.findCaptchaProvider();
+      const experience = await tenant.queries.signInExperiences.findDefaultSignInExperience();
+      assertThat(
+        experience.captchaPolicy.enabled && captchaProvider?.config.type === CaptchaType.GoCaptcha,
+        new RequestError({ code: 'session.captcha_failed', status: 422 })
+      );
+      try {
+        ctx.body = await createGoCaptcha(
+          captchaProvider.config,
+          tenant.id,
+          ctx.interactionDetails.jti
+        );
+        ctx.set('Cache-Control', 'no-store');
+      } catch {
+        throw new RequestError({ code: 'session.captcha_failed', status: 422 });
+      }
+      return next();
+    }
+  );
 
   experienceRouter.put(
     experienceRoutes.prefix,

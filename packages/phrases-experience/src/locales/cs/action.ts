@@ -1,4 +1,6 @@
 const action = {
+  captcha_slide: 'Posuňte dílek na správné místo',
+  captcha_refresh: 'Nový obrázek',
   sign_in: 'Přihlásit se',
   continue: 'Pokračovat',
   continue_as: 'Pokračovat jako {{name}}',

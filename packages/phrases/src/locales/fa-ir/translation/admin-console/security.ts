@@ -1,4 +1,11 @@
 const security = {
+  go_captcha: {
+    name: 'GoCaptcha',
+    description: 'کپچای کشویی با میزبانی شخصی',
+    endpoint: 'نشانی سرویس',
+    id: 'شناسه کشویی',
+  },
+
   page_title: 'امنیت',
   title: 'امنیت',
   subtitle: 'محافظت پیشرفته در برابر حملات پیچیده را پیکربندی کنید.',

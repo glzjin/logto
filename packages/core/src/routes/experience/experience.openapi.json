@@ -130,6 +130,21 @@
           }
         }
       }
+    },
+    "/api/experience/captcha": {
+      "post": {
+        "operationId": "CreateGoCaptchaChallenge",
+        "summary": "Create a session-bound slider CAPTCHA",
+        "description": "Requires an OIDC interaction cookie and an enabled GoCaptcha provider. Returns images and a one-use challenge token valid for five minutes. Submit a JSON string containing token, x and y as captchaToken when initializing the interaction.",
+        "responses": {
+          "200": {
+            "description": "Slider images and challenge token."
+          },
+          "422": {
+            "description": "CAPTCHA disabled or unavailable."
+          }
+        }
+      }
     }
   }
 }

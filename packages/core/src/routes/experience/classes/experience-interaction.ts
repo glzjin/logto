@@ -460,7 +460,10 @@ export default class ExperienceInteraction {
 
     assertThat(captchaProvider, new RequestError({ code: 'session.captcha_failed', status: 422 }));
 
-    const captchaValidator = new CaptchaValidator(captchaProvider, log);
+    const captchaValidator = new CaptchaValidator(captchaProvider, log, {
+      tenantId: this.tenant.id,
+      sessionId: this.ctx.interactionDetails.jti,
+    });
     const isVerified = await captchaValidator.verifyCaptcha(token);
 
     assertThat(isVerified, new RequestError({ code: 'session.captcha_failed', status: 422 }));
