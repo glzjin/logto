@@ -1,4 +1,6 @@
 const description = {
+  mainland_sms_only:
+    'SMS kodları yalnızca +86 numaraları için kullanılabilir. Diğer ülke kodları için Telegram ile giriş yapın.',
   email: 'e-posta adresi',
   phone_number: 'telefon numarası',
   username: 'kullanıcı Adı',

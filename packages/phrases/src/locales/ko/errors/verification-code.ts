@@ -1,4 +1,6 @@
 const verification_code = {
+  mainland_only:
+    'SMS 인증 코드는 +86 번호만 지원합니다. 다른 국가 번호는 Telegram으로 로그인하세요.',
   phone_email_empty: '전화번호와 이메일이 모두 비어 있어요.',
   not_found: '인증 코드를 찾을 수 없어요. 인증 코드를 먼저 요청하세요.',
   phone_mismatch: '전화번호가 맞지 않아요. 새 인증 코드를 요청해 주세요.',

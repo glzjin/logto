@@ -4,7 +4,7 @@
       "post": {
         "operationId": "CreateAndSendVerificationCode",
         "summary": "Create and send verification code",
-        "description": "Create a new `CodeVerification` record and sends the code to the specified identifier. The code verification can be used to verify the given identifier.",
+        "description": "Create a new `CodeVerification` record and sends the code to the specified identifier. The code verification can be used to verify the given identifier. SMS verification codes are restricted to normalized +86 mainland China numbers; other destinations return 422 verification_code.mainland_only. Overseas users should sign in with Telegram.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -41,6 +41,9 @@
           },
           "501": {
             "description": "The connector for sending the verification code is not configured."
+          },
+          "422": {
+            "description": "SMS destination is not supported (verification_code.mainland_only)."
           }
         }
       }
@@ -100,7 +103,7 @@
       "post": {
         "operationId": "CreateAndSendMfaVerificationCode",
         "summary": "Create and send MFA verification code",
-        "description": "Create a new MFA verification code and send it to the user's bound identifier (email or phone). This endpoint automatically uses the user's bound email address or phone number from their profile for MFA verification. The user must be identified before calling this endpoint.",
+        "description": "Create a new MFA verification code and send it to the user's bound identifier (email or phone). This endpoint automatically uses the user's bound email address or phone number from their profile for MFA verification. The user must be identified before calling this endpoint. SMS verification codes are restricted to normalized +86 mainland China numbers; other destinations return 422 verification_code.mainland_only. Overseas users should sign in with Telegram.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -108,7 +111,10 @@
                 "properties": {
                   "identifierType": {
                     "description": "The type of identifier to use for MFA verification. Must be either 'Email' or 'Phone'. The endpoint will automatically use the user's bound identifier of this type.",
-                    "enum": ["Email", "Phone"]
+                    "enum": [
+                      "Email",
+                      "Phone"
+                    ]
                   }
                 }
               }
@@ -138,6 +144,9 @@
           },
           "501": {
             "description": "The connector for the specified identifier type is not configured."
+          },
+          "422": {
+            "description": "SMS destination is not supported (verification_code.mainland_only)."
           }
         }
       }
@@ -160,7 +169,10 @@
                   },
                   "identifierType": {
                     "description": "The type of identifier used for MFA verification. Must match the type used when sending the verification code.",
-                    "enum": ["Email", "Phone"]
+                    "enum": [
+                      "Email",
+                      "Phone"
+                    ]
                   }
                 }
               }

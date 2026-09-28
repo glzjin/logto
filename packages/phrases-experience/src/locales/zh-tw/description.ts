@@ -1,4 +1,5 @@
 const description = {
+  mainland_sms_only: '簡訊驗證碼僅支援 +86 中國大陸手機號碼，海外使用者請使用 Telegram 登入。',
   email: '郵箱',
   phone_number: '手機號碼',
   username: '用戶名',

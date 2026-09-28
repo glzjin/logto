@@ -1,4 +1,6 @@
 const description = {
+  mainland_sms_only:
+    'รหัส SMS รองรับเฉพาะหมายเลข +86 สำหรับรหัสประเทศอื่น โปรดเข้าสู่ระบบด้วย Telegram',
   email: 'อีเมล',
   phone_number: 'หมายเลขโทรศัพท์',
   username: 'ชื่อผู้ใช้',

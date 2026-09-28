@@ -1,4 +1,6 @@
 const description = {
+  mainland_sms_only:
+    'I codici SMS sono disponibili solo per numeri +86. Per altri prefissi, accedi con Telegram.',
   email: 'email',
   phone_number: 'numero di telefono',
   username: 'username',

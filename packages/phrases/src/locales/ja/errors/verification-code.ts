@@ -1,4 +1,6 @@
 const verification_code = {
+  mainland_only:
+    'SMS認証コードは+86の電話番号のみ対応しています。それ以外はTelegramでログインしてください。',
   phone_email_empty: '電話番号とEメールの両方が空です。',
   not_found: '検証コードが見つかりません。先に検証コードを送信してください。',
   phone_mismatch: '電話番号が一致しません。新しい検証コードをリクエストしてください。',

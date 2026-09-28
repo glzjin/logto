@@ -1,4 +1,5 @@
 const verification_code = {
+  mainland_only: '短信验证码仅支持 +86 中国大陆手机号，海外用户请使用 Telegram 登录。',
   phone_email_empty: '手机号与邮箱地址均为空',
   not_found: '验证码不存在，请先请求发送验证码',
   phone_mismatch: '手机号码不匹配，请尝试请求新的验证码。',

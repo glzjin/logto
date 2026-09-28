@@ -1,4 +1,6 @@
 const description = {
+  mainland_sms_only:
+    'SMS認証コードは+86の電話番号のみ対応しています。それ以外はTelegramでログインしてください。',
   email: 'メールアドレス',
   phone_number: '電話番号',
   username: 'ユーザー名',

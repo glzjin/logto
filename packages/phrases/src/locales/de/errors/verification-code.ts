@@ -1,4 +1,6 @@
 const verification_code = {
+  mainland_only:
+    'SMS-Codes sind nur für +86-Nummern verfügbar. Melden Sie sich bei anderen Ländervorwahlen mit Telegram an.',
   phone_email_empty: 'Sowohl Telefon als auch E-Mail sind leer.',
   not_found: 'Bestätigungscode nicht gefunden. Bitte senden Sie zuerst den Bestätigungscode.',
   phone_mismatch:

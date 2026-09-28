@@ -1,4 +1,6 @@
 const verification_code = {
+  mainland_only:
+    'SMS kodları yalnızca +86 numaraları için kullanılabilir. Diğer ülke kodları için Telegram ile giriş yapın.',
   phone_email_empty: 'Telefon ve e-posta alanları boş.',
   not_found: 'Doğrulama kodu bulunamadı. Lütfen önce doğrulama kodu gönderin.',
   phone_mismatch: 'Telefon eşleşmiyor. Lütfen yeni bir doğrulama kodu isteyin.',

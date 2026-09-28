@@ -1,4 +1,6 @@
 const verification_code = {
+  mainland_only:
+    'Kody SMS są dostępne tylko dla numerów +86. Dla innych prefiksów zaloguj się przez Telegram.',
   phone_email_empty: 'Oba pola telefonu i emaila są puste.',
   not_found: 'Nie znaleziono kodu weryfikacyjnego. Proszę najpierw wysłać kod weryfikacyjny.',
   phone_mismatch: 'Niepoprawny numer telefonu. Proszę poprosić o nowy kod weryfikacyjny.',

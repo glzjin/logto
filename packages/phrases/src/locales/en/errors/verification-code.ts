@@ -1,4 +1,6 @@
 const verification_code = {
+  mainland_only:
+    'SMS codes are only available for +86 numbers. For other country codes, sign in with Telegram.',
   phone_email_empty: 'Both phone and email are empty.',
   not_found: 'Verification code not found. Please send verification code first.',
   phone_mismatch: 'Phone mismatch. Please request a new verification code.',

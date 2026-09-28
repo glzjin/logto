@@ -1,4 +1,6 @@
 const description = {
+  mainland_sms_only:
+    'SMS-коды доступны только для номеров +86. Для других кодов стран войдите через Telegram.',
   email: 'адрес электронной почты',
   phone_number: 'номер телефона',
   username: 'имя пользователя',
