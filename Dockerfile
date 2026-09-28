@@ -39,7 +39,7 @@ RUN pnpm cli connector link $ADDITIONAL_CONNECTOR_ARGS -p .
 ### Prune dependencies for production ###
 # Keep prune + production install in one layer to avoid extra transient disk usage.
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
-  rm -rf node_modules packages/**/node_modules && NODE_ENV=production pnpm i
+  rm -rf node_modules packages/**/node_modules && NODE_ENV=production pnpm i --frozen-lockfile --shamefully-hoist
 
 ### Clean up ###
 RUN rm -rf .scripts pnpm-*.yaml packages/cloud
