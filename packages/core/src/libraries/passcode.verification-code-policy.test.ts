@@ -13,7 +13,7 @@ const passcode = {
   tenantId: 'fake_tenant',
   id: 'id',
   interactionJti: 'jti',
-  phone: 'phone',
+  phone: '8613800138000',
   email: null,
   type: TemplateType.SignIn,
   code: '1234',
@@ -73,7 +73,9 @@ describe('verifyPasscode verification code policy', () => {
     });
 
     await expect(
-      verifyPasscode(passcode.interactionJti, passcode.type, passcode.code, { phone: 'phone' })
+      verifyPasscode(passcode.interactionJti, passcode.type, passcode.code, {
+        phone: '8613800138000',
+      })
     ).rejects.toThrow(error);
   });
 });

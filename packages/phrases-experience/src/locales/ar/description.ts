@@ -1,4 +1,6 @@
 const description = {
+  mainland_sms_only:
+    'رموز SMS متاحة فقط للأرقام التي تبدأ بـ +86. لرموز الدول الأخرى، سجّل الدخول باستخدام Telegram.',
   email: 'البريد الإلكتروني',
   phone_number: 'رقم الهاتف',
   username: 'اسم المستخدم',

@@ -174,6 +174,7 @@ const IdentifierRegisterForm = ({ className, autoFocus, signUpMethods }: Props) 
           agreeToTermsPolicy === AgreeToTermsPolicy.Automatic && styles.hidden
         )}
       />
+      <div className={styles.message}>{t('description.mainland_sms_only')}</div>
       <CaptchaBox />
       <Button
         name="submit"

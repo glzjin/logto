@@ -1,4 +1,5 @@
 const description = {
+  mainland_sms_only: '短信验证码仅支持 +86 中国大陆手机号，海外用户请使用 Telegram 登录。',
   email: '邮箱',
   phone_number: '手机号',
   username: '用户名',

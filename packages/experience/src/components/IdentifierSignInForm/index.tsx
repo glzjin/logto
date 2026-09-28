@@ -163,6 +163,7 @@ const IdentifierSignInForm = ({ className, autoFocus, signInMethods }: Props) =>
         )}
       />
 
+      <div className={styles.message}>{t('description.mainland_sms_only')}</div>
       <CaptchaBox />
       <Button
         name="submit"

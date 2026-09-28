@@ -1,4 +1,6 @@
 const description = {
+  mainland_sms_only:
+    'SMS 인증 코드는 +86 번호만 지원합니다. 다른 국가 번호는 Telegram으로 로그인하세요.',
   email: '이메일',
   phone_number: '휴대전화번호',
   username: '사용자 이름',

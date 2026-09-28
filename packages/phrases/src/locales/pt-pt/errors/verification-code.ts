@@ -1,4 +1,6 @@
 const verification_code = {
+  mainland_only:
+    'Os códigos SMS estão disponíveis apenas para números +86. Para outros indicativos, inicie sessão com o Telegram.',
   phone_email_empty: 'Tanto o telefone como o e-mail estão vazios.',
   not_found:
     'Código de verificação não encontrado. Por favor, envie primeiro o código de verificação.',

@@ -1,4 +1,6 @@
 const description = {
+  mainland_sms_only:
+    'کد پیامکی فقط برای شماره‌های +86 در دسترس است. برای سایر کدهای کشور، با Telegram وارد شوید.',
   email: 'ایمیل',
   phone_number: 'شماره تلفن',
   username: 'نام کاربری',

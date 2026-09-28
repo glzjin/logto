@@ -45,6 +45,11 @@ const useSendVerificationCode = (flow: UserFlow, replaceCurrentPage?: boolean) =
       interactionEvent?: ContinueFlowInteractionEvent,
       errorHandlers?: ErrorHandlers
     ) => {
+      if (identifier === SignInIdentifier.Phone && !/^86\d{11}$/.test(value)) {
+        setErrorMessage(t('description.mainland_sms_only'));
+        return;
+      }
+
       const captchaToken = await executeCaptcha();
       if (captchaToken === false) {
         return;

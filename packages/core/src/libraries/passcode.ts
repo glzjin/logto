@@ -67,6 +67,10 @@ export const createPasscodeLibrary = (queries: Queries, connectorLibrary: Connec
     type: TemplateType,
     payload: { phone: string } | { email: string }
   ) => {
+    if ('phone' in payload && !/^86\d{11}$/.test(payload.phone)) {
+      throw new RequestError({ code: 'verification_code.mainland_only', status: 422 });
+    }
+
     // Disable existing passcodes.
     const passcodes = jti
       ? // Session based flows. E.g. SignIn, Register, etc.
@@ -97,6 +101,10 @@ export const createPasscodeLibrary = (queries: Queries, connectorLibrary: Connec
 
     if (!emailOrPhone) {
       throw new RequestError('verification_code.phone_email_empty');
+    }
+
+    if (passcode.phone && !/^86\d{11}$/.test(passcode.phone)) {
+      throw new RequestError({ code: 'verification_code.mainland_only', status: 422 });
     }
 
     const templateType = resolveTemplateType(passcode.type);

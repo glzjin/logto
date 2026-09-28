@@ -1,4 +1,5 @@
 const verification_code = {
+  mainland_only: '短訊驗證碼僅支援 +86 中國內地手機號碼，海外用戶請使用 Telegram 登入。',
   phone_email_empty: '手機號碼與電子郵件地址均為空',
   not_found: '驗證碼不存在，請先請求發送驗證碼',
   phone_mismatch: '手機號碼不匹配，請嘗試請求新的驗證碼。',

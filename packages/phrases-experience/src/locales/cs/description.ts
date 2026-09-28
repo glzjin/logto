@@ -1,4 +1,6 @@
 const description = {
+  mainland_sms_only:
+    'SMS kódy jsou dostupné pouze pro čísla +86. Pro jiné předvolby se přihlaste přes Telegram.',
   email: 'e-mail',
   phone_number: 'telefonní číslo',
   username: 'uživatelské jméno',
