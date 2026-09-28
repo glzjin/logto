@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import api from '@/apis/api';
+import Button from '@/shared/components/Button';
 
 import styles from './go-captcha.module.scss';
 
@@ -86,28 +87,25 @@ const GoCaptcha = ({ onComplete, onCancel }: Props) => {
         </>
       )}
       <div className={styles.actions}>
-        <button
-          type="button"
+        <Button
+          type="secondary"
+          size="small"
+          title="action.captcha_refresh"
           onClick={() => {
             setGeneration((value) => value + 1);
           }}
-        >
-          {t('action.captcha_refresh')}
-        </button>
-        <button type="button" onClick={onCancel}>
-          {t('action.cancel')}
-        </button>
-        <button
-          type="button"
-          disabled={!challenge}
+        />
+        <Button type="secondary" size="small" title="action.cancel" onClick={onCancel} />
+        <Button
+          size="small"
+          title="action.confirm"
+          isDisabled={!challenge}
           onClick={() => {
             if (challenge) {
               onComplete(JSON.stringify({ token: challenge.token, x: position, y: challenge.y }));
             }
           }}
-        >
-          {t('action.confirm')}
-        </button>
+        />
       </div>
     </section>
   );
