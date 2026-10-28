@@ -18,6 +18,12 @@ const redis = {
     store.delete(key);
     return value;
   }),
+  incr: jest.fn(async (key: string) => {
+    const value = Number(store.get(key) ?? 0) + 1;
+    store.set(key, String(value));
+    return value;
+  }),
+  expire: jest.fn(async () => true),
 };
 const generated = {
   code: 200,
@@ -44,7 +50,7 @@ mockEsm('ky', () => ({
     }),
   },
 }));
-const { createGoCaptcha, verifyGoCaptcha } = await import('./go-captcha.js');
+const { challengesPerSession, createGoCaptcha, verifyGoCaptcha } = await import('./go-captcha.js');
 const config: GoCaptchaConfig = {
   type: CaptchaType.GoCaptcha,
   siteKey: 'slide-default',
@@ -113,4 +119,15 @@ it('rejects malformed tokens, changed providers, missing Redis and failed cleanu
   expect(await verifyGoCaptcha(config, 'tenant', 'session', answer(cleanup.token))).toBe(false);
   isOpen.mockReturnValue(false);
   await expect(createGoCaptcha(config, 'tenant', 'session')).rejects.toThrow('requires Redis');
+});
+
+it('limits the challenges one session can request', async () => {
+  await Promise.all(
+    Array.from({ length: challengesPerSession }, async () =>
+      createGoCaptcha(config, 'tenant', 'session')
+    )
+  );
+  await expect(createGoCaptcha(config, 'tenant', 'session')).rejects.toThrow('Too many');
+  await expect(createGoCaptcha(config, 'tenant', 'other')).resolves.toHaveProperty('token');
+  expect(redis.expire).toHaveBeenCalledWith('gocaptcha-count:tenant:session', 3600);
 });

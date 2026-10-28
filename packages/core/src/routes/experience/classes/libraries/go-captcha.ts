@@ -43,6 +43,11 @@ const clientFor = (config: GoCaptchaConfig) =>
 const bindingKey = (tenantId: string, sessionId: string, token: string) =>
   `gocaptcha:${tenantId}:${sessionId}:${token}`;
 
+/** Challenges one sign-in session may request, so a script cannot farm puzzles from one session. */
+export const challengesPerSession = 20;
+const challengeCountKey = (tenantId: string, sessionId: string) =>
+  `gocaptcha-count:${tenantId}:${sessionId}`;
+
 export async function createGoCaptcha(
   config: GoCaptchaConfig,
   tenantId: string,
@@ -51,6 +56,14 @@ export async function createGoCaptcha(
   const { client } = redisCache;
   if (!client?.isOpen) {
     throw new Error('GoCaptcha requires Redis');
+  }
+  const countKey = challengeCountKey(tenantId, sessionId);
+  const count = await client.incr(countKey);
+  if (count === 1) {
+    await client.expire(countKey, 3600);
+  }
+  if (count > challengesPerSession) {
+    throw new Error('Too many GoCaptcha challenges for this session');
   }
   const { data } = dataGuard.parse(
     await clientFor(config)
