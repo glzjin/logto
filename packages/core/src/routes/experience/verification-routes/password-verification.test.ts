@@ -160,6 +160,7 @@ type PasswordVerificationRouteContext = {
     signInExperienceValidator: {
       getSignInExperienceData: typeof getSignInExperienceData;
     };
+    guardPasswordAttempt: jest.Mock;
     setVerificationRecord: jest.Mock;
     save: jest.Mock;
   };
@@ -230,6 +231,7 @@ const createContext = (
     signInExperienceValidator: {
       getSignInExperienceData,
     },
+    guardPasswordAttempt: jest.fn().mockImplementation(resolveVoid),
     setVerificationRecord: jest.fn(),
     save: jest.fn().mockImplementation(resolveVoid),
   },

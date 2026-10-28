@@ -2,7 +2,7 @@ import { redisCache } from '#src/caches/index.js';
 
 const budgetLifetime = 600;
 /** Password attempts allowed after each successful captcha verification. */
-export const passwordAttemptsPerCaptcha = 5;
+const passwordAttemptsPerCaptcha = 5;
 
 const budgetKey = (tenantId: string, sessionId: string) =>
   `captcha-budget:${tenantId}:${sessionId}`;
