@@ -59,6 +59,7 @@ import {
   type AuthenticationContribution,
 } from './libraries/authentication-context.js';
 import { AuthenticationProofs } from './libraries/authentication-proofs.js';
+import { consumeCaptchaBudget, resetCaptchaBudget } from './libraries/captcha-budget.js';
 import { CaptchaValidator } from './libraries/captcha-validator.js';
 import { MfaValidator, isMfaVerificationRecord } from './libraries/mfa-validator.js';
 import { ProvisionLibrary } from './libraries/provision-library.js';
@@ -820,6 +821,7 @@ export default class ExperienceInteraction {
     assertThat(isVerified, new RequestError({ code: 'session.captcha_failed', status: 422 }));
 
     this.captcha.verified = true;
+    await resetCaptchaBudget(this.tenant.id, this.ctx.interactionDetails.jti);
   }
 
   /**
@@ -1220,6 +1222,31 @@ export default class ExperienceInteraction {
     }
 
     await this.signInExperienceValidator.guardCaptcha();
+  }
+
+  /**
+   * Require a captcha before identifier password verification in anonymous sessions, and allow
+   * only a limited number of password attempts per captcha so one solved captcha cannot be reused
+   * for credential stuffing. The sign-in page solves a new captcha on every submit.
+   *
+   * @throws {RequestError} with 422 `session.captcha_required` when a (new) captcha is needed
+   */
+  async guardPasswordAttempt() {
+    if (this.isStepUp || this.captcha.skipped || this.userId) {
+      return;
+    }
+
+    await this.guardCaptcha();
+
+    if (!this.captcha.verified) {
+      // Captcha is disabled for this tenant.
+      return;
+    }
+
+    assertThat(
+      await consumeCaptchaBudget(this.tenant.id, this.ctx.interactionDetails.jti),
+      new RequestError({ code: 'session.captcha_required', status: 422 })
+    );
   }
 
   /** Convert the current interaction to JSON, so that it can be stored as the OIDC provider interaction result */

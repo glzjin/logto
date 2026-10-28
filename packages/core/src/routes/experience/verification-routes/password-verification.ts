@@ -154,6 +154,8 @@ const verifyIdentifierPassword = async (
   password: string
 ): Promise<VerifiedPassword> => {
   const { experienceInteraction } = ctx;
+  await experienceInteraction.guardPasswordAttempt();
+
   const passwordVerification = PasswordVerification.create(libraries, queries, identifier);
 
   const verificationResult = await withSentinel(
