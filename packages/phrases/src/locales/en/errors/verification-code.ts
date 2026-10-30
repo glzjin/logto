@@ -1,4 +1,6 @@
 const verification_code = {
+  send_budget_exceeded: 'Too many verification codes have been sent. Please try again later.',
+  send_budget_unavailable: 'Verification codes cannot be sent right now. Please try again later.',
   mainland_only:
     'SMS codes are only available for +86 numbers. For other country codes, sign in with Telegram.',
   phone_email_empty: 'Both phone and email are empty.',

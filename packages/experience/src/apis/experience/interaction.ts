@@ -20,6 +20,12 @@ export const initInteraction = async (interactionEvent: InteractionEvent, captch
     },
   });
 
+/** Mydas stop-gap: verify a new captcha inside the current interaction (keeps its records). */
+export const verifyInteractionCaptcha = async (captchaToken: string) =>
+  api.post(`${experienceApiRoutes.prefix}/captcha/verify`, {
+    json: { captchaToken },
+  });
+
 export const identifyUser = async (payload: IdentificationApiPayload = {}) =>
   api.post(experienceApiRoutes.identification, { json: payload });
 

@@ -5,6 +5,7 @@ import { useTranslation, Trans } from 'react-i18next';
 
 import SwitchToVerificationMethodsLink from '@/components/SwitchToVerificationMethodsLink';
 import TextLink from '@/components/TextLink';
+import CaptchaBox from '@/containers/CaptchaBox';
 import Button from '@/shared/components/Button';
 import VerificationCodeInput, { defaultLength } from '@/shared/components/VerificationCode';
 import { UserFlow } from '@/types';
@@ -129,6 +130,8 @@ const VerificationCode = ({
           </Trans>
         )}
       </div>
+      {/* Mount point for the slider a resend may need once the per-captcha send budget is spent. */}
+      <CaptchaBox />
       {flow === UserFlow.SignIn && (
         <SwitchToVerificationMethodsLink
           hasPassword={hasPasswordButton}

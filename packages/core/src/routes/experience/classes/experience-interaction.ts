@@ -1,5 +1,7 @@
 /* eslint-disable max-lines */
 
+import { createHash } from 'node:crypto';
+
 import { appInsights } from '@logto/app-insights/node';
 import {
   AuthenticationContextMode,
@@ -22,7 +24,7 @@ import {
   type User,
   type VerificationCodeIdentifier,
 } from '@logto/schemas';
-import { maskEmail, maskPhone } from '@logto/shared';
+import { generateStandardId, maskEmail, maskPhone } from '@logto/shared';
 import { conditional, trySafe } from '@silverhand/essentials';
 import { z } from 'zod';
 
@@ -65,6 +67,12 @@ import { consumeCaptchaBudget, resetCaptchaBudget } from './libraries/captcha-bu
 import { CaptchaValidator } from './libraries/captcha-validator.js';
 import { MfaValidator, isMfaVerificationRecord } from './libraries/mfa-validator.js';
 import { ProvisionLibrary } from './libraries/provision-library.js';
+import {
+  reserveSendBudget,
+  sendBudgetExceeded,
+  sendBudgetPolicy,
+  type SendBudgetOwner,
+} from './libraries/send-budget.js';
 import { SignInExperienceValidator } from './libraries/sign-in-experience-validator.js';
 import {
   computeStepUpEligibility,
@@ -177,6 +185,27 @@ const buildMfaMaskedIdentifiers = (
  * Two leaves room to correct a mistyped email or phone number without solving another captcha.
  */
 const maxUnverifiedCodeRecipientsPerCaptcha = 2;
+
+/** External identities are stored hashed in the send budget keys. */
+const hashFederatedIdentity = (value: string) => createHash('sha256').update(value).digest('hex');
+
+const captchaRequiredError = () =>
+  new RequestError({ code: 'session.captcha_required', status: 422 });
+
+/** Hashed `<kind>:<connector>:<external user id>` of a verified social or SSO identity. */
+const getFederatedIdentityKey = (records: readonly VerificationRecord[]): string | undefined => {
+  for (const record of records) {
+    if (record.type === VerificationType.Social && record.socialUserInfo) {
+      return hashFederatedIdentity(`social:${record.connectorId}:${record.socialUserInfo.id}`);
+    }
+
+    if (record.type === VerificationType.EnterpriseSso && record.enterpriseSsoUserInfo) {
+      return hashFederatedIdentity(`sso:${record.connectorId}:${record.enterpriseSsoUserInfo.id}`);
+    }
+  }
+
+  return undefined;
+};
 
 /** The normalized `<type>:<value>` key of a verification code recipient. */
 const toCodeRecipient = ({ type, value }: VerificationCodeIdentifier) =>
@@ -836,8 +865,9 @@ export default class ExperienceInteraction {
     assertThat(isVerified, new RequestError({ code: 'session.captcha_failed', status: 422 }));
 
     this.captcha.verified = true;
-    // A new captcha covers new verification code recipients.
+    // A new captcha covers new verification code recipients and opens a fresh send budget.
     this.captcha.codeRecipients = undefined;
+    this.captcha.solveId = generateStandardId();
     await resetCaptchaBudget(this.tenant.id, this.ctx.interactionDetails.jti);
   }
 
@@ -1313,6 +1343,73 @@ export default class ExperienceInteraction {
     );
 
     this.captcha.codeRecipients = [...codeRecipients, recipient];
+  }
+
+  /**
+   * Mydas stop-gap (logto-io/logto#9909): reserve one verification code send against every
+   * budget that applies to whoever is sending, atomically and before the connector is called.
+   *
+   * - Identified users (incl. pure step-up subjects and MFA): per user, across interactions.
+   * - Social / SSO before identification (captcha skipped): per verified external identity.
+   * - Otherwise per solved captcha (`solveId`); an exhausted solve asks for a new captcha.
+   * - Captcha policy disabled: per interaction.
+   * - Always: per client IP.
+   *
+   * @throws {RequestError} 422 `session.captcha_required` when a (new) captcha is needed,
+   * 429 `verification_code.send_budget_exceeded`, or 503 when the budget store is unavailable.
+   */
+  async reserveVerificationCodeSend() {
+    const { ip } = this.ctx.request;
+    const owners: SendBudgetOwner[] = [
+      this.getSendBudgetOwner(),
+      ...(ip
+        ? [{ key: `ip:${ip}`, windows: sendBudgetPolicy.perIp, exceeded: sendBudgetExceeded }]
+        : []),
+    ];
+
+    await reserveSendBudget(this.tenant.id, owners);
+  }
+
+  /** The budget owner of a verification code send; see {@link reserveVerificationCodeSend}. */
+  getSendBudgetOwner(): SendBudgetOwner {
+    const userId = this.identifiedUserId ?? this.subjectUserId;
+
+    if (userId) {
+      return {
+        key: `user:${userId}`,
+        windows: sendBudgetPolicy.perUser,
+        exceeded: sendBudgetExceeded,
+      };
+    }
+
+    if (this.captcha.skipped) {
+      const identity = getFederatedIdentityKey(this.verificationRecordsArray);
+      // Skipped without a verified external identity should not happen; never send unbudgeted.
+      assertThat(identity, captchaRequiredError());
+
+      return {
+        key: `identity:${identity}`,
+        windows: sendBudgetPolicy.perIdentity,
+        exceeded: sendBudgetExceeded,
+      };
+    }
+
+    if (this.captcha.verified) {
+      // Interactions saved before solve ids existed must solve a new captcha.
+      assertThat(this.captcha.solveId, captchaRequiredError());
+
+      return {
+        key: `captcha:${this.captcha.solveId}`,
+        windows: sendBudgetPolicy.perCaptchaSolve,
+        exceeded: captchaRequiredError,
+      };
+    }
+
+    return {
+      key: `interaction:${this.ctx.interactionDetails.jti}`,
+      windows: sendBudgetPolicy.perInteraction,
+      exceeded: sendBudgetExceeded,
+    };
   }
 
   /** Convert the current interaction to JSON, so that it can be stored as the OIDC provider interaction result */

@@ -68,7 +68,8 @@ export default function verificationCodeRoutes<T extends ExperienceInteractionRo
       }),
       // 403: a pure step-up supplied a raw identifier
       // 404: subject-bound variant without a subject; 429: rate limited; 501: connector not found
-      status: [200, 400, 403, 404, 422, 429, 501],
+      // 503: the verification code send budget store is unavailable (fails closed)
+      status: [200, 400, 403, 404, 422, 429, 501, 503],
     }),
     async (ctx, next) => {
       const { identifier: identifierPayload, interactionEvent } = ctx.guard.body;
@@ -87,6 +88,7 @@ export default function verificationCodeRoutes<T extends ExperienceInteractionRo
           queries,
         });
 
+        await experienceInteraction.reserveVerificationCodeSend();
         ctx.body = await sendCode({
           identifier,
           interactionEvent,
@@ -120,6 +122,9 @@ export default function verificationCodeRoutes<T extends ExperienceInteractionRo
           ({ identifier: id }) =>
             id === identifier.type || id === AlternativeSignUpIdentifier.EmailOrPhone
         );
+
+      // Mydas stop-gap: budget every send (identified, captcha-skipped and captcha paths alike).
+      await ctx.experienceInteraction.reserveVerificationCodeSend();
 
       ctx.body = await sendCode({
         identifier,
@@ -196,8 +201,8 @@ export default function verificationCodeRoutes<T extends ExperienceInteractionRo
       response: z.object({
         verificationId: z.string(),
       }),
-      // 429: rate limited; 501: connector not found
-      status: [200, 400, 404, 429, 501],
+      // 429: rate limited; 501: connector not found; 503: send budget store unavailable
+      status: [200, 400, 404, 429, 501, 503],
     }),
     async (ctx, next) => {
       const { identifierType } = ctx.guard.body;
@@ -209,6 +214,7 @@ export default function verificationCodeRoutes<T extends ExperienceInteractionRo
         queries,
       });
 
+      await experienceInteraction.reserveVerificationCodeSend();
       ctx.body = await sendCode({
         identifier,
         createVerificationRecord: () =>

@@ -47,6 +47,7 @@ import {
   MfaEmailCodeVerification,
 } from './verifications/code-verification.js';
 import { PasswordVerification } from './verifications/password-verification.js';
+import { SocialVerification } from './verifications/social-verification.js';
 import { TotpVerification } from './verifications/totp-verification.js';
 import { SignInPasskeyVerification } from './verifications/web-authn-verification.js';
 
@@ -141,6 +142,23 @@ const mockJwtCustomizerUserContext: JwtCustomizerUserContext = {
   organizations: [],
   organizationRoles: [],
 };
+
+// Mydas stop-gap: capture which send budgets an interaction reserves.
+const reserveSendBudget = jest.fn(async (_tenantId: string, _owners: unknown[]) => {
+  // Records the owners; tests read them from `mock.calls`.
+});
+mockEsm('./libraries/send-budget.js', () => ({
+  reserveSendBudget,
+  sendBudgetExceeded: () =>
+    new RequestError({ code: 'verification_code.send_budget_exceeded', status: 429 }),
+  sendBudgetPolicy: {
+    perCaptchaSolve: [{ seconds: 3600, max: 2 }],
+    perUser: [{ seconds: 3600, max: 5 }],
+    perIdentity: [{ seconds: 3600, max: 5 }],
+    perInteraction: [{ seconds: 3600, max: 5 }],
+    perIp: [{ seconds: 600, max: 20 }],
+  },
+}));
 
 const ExperienceInteraction = await pickDefault(import('./experience-interaction.js'));
 
@@ -1934,6 +1952,79 @@ describe('ExperienceInteraction class', () => {
     new ExperienceInteraction(ctx, tenant, {
       result: { interactionEvent: InteractionEvent.Register, captcha },
     } as unknown as Interaction);
+
+  // The interaction reads its OIDC interaction details from ctx at runtime, so pass them on ctx too.
+  const createSendBudgetInteraction = (result: Record<string, unknown>) => {
+    const interactionDetails = {
+      jti: 'send-budget-interaction',
+      params: { client_id: adminConsoleApplicationId },
+      result: { interactionEvent: InteractionEvent.Register, ...result },
+    } as unknown as Interaction;
+
+    return new ExperienceInteraction({ ...ctx, interactionDetails }, tenant, interactionDetails);
+  };
+
+  describe('reserveVerificationCodeSend (mydas stop-gap)', () => {
+    type Owner = { key: string; exceeded: () => RequestError };
+    const ownersOf = () => (reserveSendBudget.mock.calls.at(-1)?.[1] ?? []) as Owner[];
+    const captchaRequired = new RequestError({ code: 'session.captcha_required', status: 422 });
+    beforeEach(() => {
+      reserveSendBudget.mockClear();
+    });
+
+    it('budgets identified users per user, whatever the captcha state', async () => {
+      await createSendBudgetInteraction({
+        userId: 'user-1',
+        captcha: { verified: false, skipped: true },
+      }).reserveVerificationCodeSend();
+      expect(ownersOf()[0]?.key).toBe('user:user-1');
+    });
+
+    it('budgets a solved captcha by its solve id and asks for a new captcha when spent', async () => {
+      await createSendBudgetInteraction({
+        captcha: { verified: true, skipped: false, solveId: 'solve-1' },
+      }).reserveVerificationCodeSend();
+      const [owner] = ownersOf();
+      expect(owner?.key).toBe('captcha:solve-1');
+      expect(owner?.exceeded()).toMatchError(captchaRequired);
+    });
+
+    it('requires a new captcha for interactions saved before solve ids existed', async () => {
+      await expect(
+        createSendBudgetInteraction({
+          captcha: { verified: true, skipped: false },
+        }).reserveVerificationCodeSend()
+      ).rejects.toMatchError(captchaRequired);
+      expect(reserveSendBudget).not.toHaveBeenCalled();
+    });
+
+    it('budgets social sign-ups that skipped the captcha by the hashed external identity', async () => {
+      const interaction = createSendBudgetInteraction({
+        captcha: { verified: false, skipped: true },
+      });
+      interaction.setVerificationRecord(
+        new SocialVerification(libraries, queries, {
+          id: 'social-verification-id',
+          type: VerificationType.Social,
+          connectorId: 'github',
+          socialUserInfo: { id: 'gh-42' },
+        })
+      );
+      await interaction.reserveVerificationCodeSend();
+      const [owner] = ownersOf();
+      expect(owner?.key).toMatch(/^identity:[\da-f]{64}$/);
+      expect(owner?.key).not.toContain('gh-42');
+    });
+
+    it('never sends unbudgeted when a skipped captcha has no verified identity', async () => {
+      await expect(
+        createSendBudgetInteraction({
+          captcha: { verified: false, skipped: true },
+        }).reserveVerificationCodeSend()
+      ).rejects.toMatchError(captchaRequired);
+      expect(reserveSendBudget).not.toHaveBeenCalled();
+    });
+  });
 
   describe('guardCaptchaForVerificationCode', () => {
     const captchaRequired = new RequestError({ code: 'session.captcha_required', status: 422 });

@@ -155,6 +155,24 @@ export default function experienceApiRoutes<T extends AnonymousRouter>(
     }
   );
 
+  // Mydas stop-gap: solve a new captcha inside the current interaction (e.g. before a resend once
+  // the per-solve send budget is spent) without re-initializing it and losing its records.
+  experienceRouter.post(
+    `${experienceRoutes.prefix}/captcha/verify`,
+    koaGuard({
+      body: z.object({ captchaToken: z.string().min(1) }),
+      status: [204, 400, 422],
+    }),
+    async (ctx, next) => {
+      const { experienceInteraction } = ctx;
+      await experienceInteraction.verifyCaptcha(ctx.guard.body.captchaToken);
+      await experienceInteraction.save();
+      ctx.status = 204;
+
+      return next();
+    }
+  );
+
   experienceRouter.put(
     `${experienceRoutes.prefix}/interaction-event`,
     koaGuard({

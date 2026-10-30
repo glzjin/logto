@@ -1,4 +1,6 @@
 const verification_code = {
+  send_budget_exceeded: '验证码发送过于频繁，请稍后再试。',
+  send_budget_unavailable: '暂时无法发送验证码，请稍后再试。',
   mainland_only: '短信验证码仅支持 +86 中国大陆手机号，海外用户请使用 Telegram 登录。',
   phone_email_empty: '手机号与邮箱地址均为空',
   not_found: '验证码不存在，请先请求发送验证码',

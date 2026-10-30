@@ -160,6 +160,37 @@
           }
         }
       }
+    },
+    "/api/experience/captcha/verify": {
+      "post": {
+        "operationId": "VerifyInteractionCaptcha",
+        "summary": "Verify a CAPTCHA within the current interaction",
+        "description": "Verifies a solved CAPTCHA for the existing experience interaction without re-initializing it, keeping its verification records. A verified CAPTCHA starts a new verification code send budget.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "captchaToken": {
+                    "description": "The CAPTCHA token (for GoCaptcha, a JSON string containing token, x and y)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The CAPTCHA has been verified for the current interaction."
+          },
+          "400": {
+            "description": "The request body is invalid."
+          },
+          "422": {
+            "description": "The CAPTCHA verification failed."
+          }
+        }
+      }
     }
   }
 }

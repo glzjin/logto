@@ -25,6 +25,7 @@ export {
   identifyUser,
   identifyAndSubmitInteraction,
   setTrustedDeviceOptInDecision,
+  verifyInteractionCaptcha,
 } from './interaction';
 
 export * from './avatar';

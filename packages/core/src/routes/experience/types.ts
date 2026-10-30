@@ -242,6 +242,8 @@ export type InteractionStorage = {
      * captcha. Only a limited number of them may be unverified before a new captcha is required.
      */
     codeRecipients?: string[];
+    /** Id of the latest solved captcha; owns the per-solve verification code send budget. */
+    solveId?: string;
   };
 };
 
@@ -268,6 +270,7 @@ export const interactionStorageGuard = z.object({
       verified: z.boolean(),
       skipped: z.boolean(),
       codeRecipients: z.string().array().optional(),
+      solveId: z.string().optional(),
     })
     .optional(),
 }) satisfies ToZodObject<InteractionStorage>;

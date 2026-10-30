@@ -4,8 +4,9 @@ import { useCallback, useContext, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTimer } from 'react-timer-hook';
 
+import CaptchaContext from '@/Providers/CaptchaContextProvider/CaptchaContext';
 import UserInteractionContext from '@/Providers/UserInteractionContextProvider/UserInteractionContext';
-import { sendVerificationCode } from '@/apis/experience';
+import { sendVerificationCode, verifyInteractionCaptcha } from '@/apis/experience';
 import { getInteractionEventFromState, userFlowToInteractionEventMap } from '@/apis/utils';
 import useApi from '@/hooks/use-api';
 import useErrorHandler from '@/hooks/use-error-handler';
@@ -43,25 +44,58 @@ const useResendVerificationCode = (flow: UserFlow, identifier: VerificationCodeI
 
   const handleError = useErrorHandler();
   const resendVerificationCode = useApi(sendVerificationCode);
+  const verifyCaptcha = useApi(verifyInteractionCaptcha);
+  const { executeCaptcha } = useContext(CaptchaContext);
   const { setVerificationId } = useContext(UserInteractionContext);
 
   const onResendVerificationCode = useCallback(async () => {
-    const [error, result] = await resendVerificationCode(interactionEvent, identifier);
+    const resend = async (allowCaptchaRetry: boolean): Promise<void> => {
+      const [error, result] = await resendVerificationCode(interactionEvent, identifier);
 
-    if (error) {
-      await handleError(error);
+      if (error) {
+        await handleError(
+          error,
+          allowCaptchaRetry
+            ? {
+                // Mydas stop-gap: a spent per-captcha send budget asks for a new captcha. Solve
+                // it in place (keeping the interaction) and retry the resend once.
+                'session.captcha_required': async () => {
+                  const captchaToken = await executeCaptcha();
 
-      return;
-    }
+                  if (!captchaToken) {
+                    return;
+                  }
 
-    if (result) {
-      // Renew the verification ID in the context
-      setVerificationId(codeVerificationTypeMap[identifier.type], result.verificationId);
-      setToast(t('description.passcode_sent'));
-      restart(getTimeout(), true);
-    }
+                  const [verifyError] = await verifyCaptcha(captchaToken);
+
+                  if (verifyError) {
+                    await handleError(verifyError);
+
+                    return;
+                  }
+
+                  await resend(false);
+                },
+              }
+            : undefined
+        );
+
+        return;
+      }
+
+      if (result) {
+        // Renew the verification ID in the context
+        setVerificationId(codeVerificationTypeMap[identifier.type], result.verificationId);
+        setToast(t('description.passcode_sent'));
+        restart(getTimeout(), true);
+      }
+    };
+
+    await resend(true);
   }, [
     resendVerificationCode,
+    verifyCaptcha,
+    executeCaptcha,
     interactionEvent,
     identifier,
     handleError,
